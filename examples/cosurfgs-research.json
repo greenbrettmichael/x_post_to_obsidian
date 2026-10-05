@@ -1,0 +1,49 @@
+{
+  "title": "CoSurfGS — distributed surface reconstruction with Gaussian splatting",
+  "summary": "CoSurfGS distributes the reconstruction of large scenes across local devices, then compresses and combines their models. The aim is to obtain useful surface geometry while controlling memory and training time. This is an announcement from MrNeRF, rather than a post by the paper's author team. [Project](https://gyy456.github.io/CoSurfGS/)",
+  "findings": "### Method\n\nThe December 2024 paper describes local training, Local Model Compression (LMC), and a Model Aggregation Scheme (MAS) using self-distillation. It builds on PGSR-style geometry constraints. [Paper, sections 4.2–4.4](https://arxiv.org/html/2412.17612v1)\n\n### Results and context\n\nFor BlendedMVS Scene-04, the authors report an F-score of 0.7116 for CoSurfGS and 0.6976 for PGSR. These are paper-reported results, not an independent replication. Other rendering baselines win some metrics, so the X post's broad performance claim needs qualification. [Paper, tables 1–2](https://arxiv.org/html/2412.17612v1)\n\nThe project offers mesh comparisons, examples of compression and aggregation, and renderings. Its code link and repository README still describe code as forthcoming when checked on October 5, 2026. [Project](https://gyy456.github.io/CoSurfGS/), [repository](https://github.com/zju3dv/CoSurfGS)\n\nFor background, the original 3D Gaussian Splatting project focuses on fast, high-quality novel views; reconstructing an accurate mesh is an additional goal. [Original 3DGS project](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/)",
+  "opinions": "### Human discussion\n\nTwo repository issues provide limited outside reaction: Xiaozi0 expresses enthusiasm and asks for the code/paper on September 13, 2024; z-x-j requests code on January 14, 2025. These are release requests, not benchmark validation or detailed reviews. [Issue 1](https://github.com/zju3dv/CoSurfGS/issues/1), [issue 2](https://github.com/zju3dv/CoSurfGS/issues/2)\n\n### Automated review — treat as an opinion\n\nPith's August 11, 2026 machine review, labeled deepseek-v4-flash, questions how locally trained models share a coordinate frame and whether the benchmark claims are too broad. These are generated criticisms to investigate, not established defects or human peer review. [Pith review](https://pith.science/paper/2412.17612)\n\nThis research pass did not locate a substantial independent human reproduction report. That is a search limitation, not evidence that none exists.",
+  "limitations": "- The available repository README gives limited support for reproducing the experiments. Check code availability again before planning implementation work. [Repository](https://github.com/zju3dv/CoSurfGS)\n- The performance numbers above come from the authors' preprint. They do not establish universal superiority or current state of the art. [Paper](https://arxiv.org/html/2412.17612v1)\n- Analyst inference: before applying this approach to independently captured local scenes, check camera-coordinate consistency, overlap at boundaries, and whether the reported memory figure describes per-device or aggregate resource use. These are implementation questions, not verified failures.\n- The reviewed paper is the December 23, 2024 arXiv v1. Later discussion is dated separately; later publication versions were not compared in this example.\n- This example was prepared in the current Codex conversation using retrieved sources and the tool's media/writing components. No standalone paid API inference was run.",
+  "media_analysis": "The attached clip was downloaded and twelve frames were extracted across about 34 seconds. Four representative frames were directly inspected in this research pass. At 0.00 and about 9.25 seconds, a diagram shows sixteen local device models around a partitioned scene, labeled Device Training. At about 21.59 and 30.85 seconds, Edge Aggregation panels compare merged and refined mesh/RGB representations and identify LMC and MAS. These illustrate the pipeline; they do not independently demonstrate the numerical results. [Original post and video](https://x.com/janusch_patas/status/1871455615752847763)\n\nLocal Faster Whisper with voice activity detection returned an empty transcript. No speech was recognized. The presence or meaning of music, sound effects, or other non-speech audio was not assessed, and this result does not prove the clip is silent. Video analysis is based on sampled frames rather than every frame.",
+  "topics": [
+    {
+      "name": "CoSurfGS",
+      "overview": "A project for distributed reconstruction of large 3D surfaces using Gaussian models. [Project](https://gyy456.github.io/CoSurfGS/)",
+      "contribution": "This announcement introduces the device-to-edge reconstruction workflow and points to its project, demonstrations, and preprint. Start with the post note for a source trail, media observations, outside reactions, and caveats. [Project](https://gyy456.github.io/CoSurfGS/)",
+      "related": ["3D Gaussian Splatting", "Surface Reconstruction", "Distributed Learning", "Novel View Synthesis"]
+    },
+    {
+      "name": "3D Gaussian Splatting",
+      "overview": "Represent a scene with optimized Gaussian primitives and render new camera views efficiently. [Original 3DGS project](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/)",
+      "contribution": "CoSurfGS is a surface-oriented extension of the Gaussian representation. It is useful to distinguish good-looking renderings from accurate geometry when comparing related bookmarks. [Project demonstrations](https://gyy456.github.io/CoSurfGS/)",
+      "related": ["CoSurfGS", "Surface Reconstruction", "Novel View Synthesis"]
+    },
+    {
+      "name": "Surface Reconstruction",
+      "overview": "Recover usable scene geometry from captured observations. Keep geometry evaluation separate from the appearance of synthesized images.",
+      "contribution": "The CoSurfGS project supplies mesh comparisons and visual ablations of LMC/MAS. They are qualitative evidence; inspect the associated paper before drawing quantitative conclusions. [Project](https://gyy456.github.io/CoSurfGS/)",
+      "related": ["CoSurfGS", "3D Gaussian Splatting", "Novel View Synthesis"]
+    },
+    {
+      "name": "Distributed Learning",
+      "overview": "Split model learning across cooperating devices and combine their outputs. Track communication, consistency, and resource costs as well as local training speed.",
+      "contribution": "CoSurfGS trains local Gaussian models and aggregates compressed outputs at edge/cloud levels. Its fusion uses self-distillation. Camera alignment and total resource accounting are useful follow-up questions. [Paper, section 4](https://arxiv.org/html/2412.17612v1)",
+      "related": ["CoSurfGS", "Surface Reconstruction"]
+    },
+    {
+      "name": "Novel View Synthesis",
+      "overview": "Generate images from new camera viewpoints after learning a scene from input photographs. [Original 3DGS project](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/)",
+      "contribution": "The CoSurfGS project compares RGB and depth outputs alongside its mesh results. Use these views to inspect appearance, and keep them distinct from a surface-accuracy claim. [Project](https://gyy456.github.io/CoSurfGS/)",
+      "related": ["CoSurfGS", "3D Gaussian Splatting", "Surface Reconstruction"]
+    }
+  ],
+  "sources": [
+    {"title": "CoSurfGS project", "url": "https://gyy456.github.io/CoSurfGS/", "kind": "primary"},
+    {"title": "CoSurfGS arXiv v1 (December 23, 2024)", "url": "https://arxiv.org/html/2412.17612v1", "kind": "primary"},
+    {"title": "CoSurfGS repository", "url": "https://github.com/zju3dv/CoSurfGS", "kind": "primary"},
+    {"title": "Request for code and paper (September 13, 2024)", "url": "https://github.com/zju3dv/CoSurfGS/issues/1", "kind": "commentary"},
+    {"title": "Request for code (January 14, 2025)", "url": "https://github.com/zju3dv/CoSurfGS/issues/2", "kind": "commentary"},
+    {"title": "Pith machine review (August 11, 2026)", "url": "https://pith.science/paper/2412.17612", "kind": "machine-review"},
+    {"title": "Original 3D Gaussian Splatting project", "url": "https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/", "kind": "primary"}
+  ]
+}

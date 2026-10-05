@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+x2o_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+if [[ ! -x "$x2o_root/.venv/bin/python" ]]; then
+  echo 'Install first: python3 -m venv .venv; .venv/bin/python -m pip install -e .' >&2
+  exit 1
+fi
+exec "$x2o_root/.venv/bin/python" -m x2o.cli "$@"

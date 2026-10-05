@@ -1,0 +1,20 @@
+{
+  "tweet": {
+    "id": "1871455615752847763",
+    "text": "CoSurfGS:Collaborative 3D Surface Gaussian Splatting with Distributed Learning for Large Scene Reconstruction\n\nContributions:\n- We propose a collaborative large-scale surface reconstruction method based on distributed learning, achieving a substantial reduction in training time.\n\n- We introduce the Local Model Compression (LMC) and Model Aggregation Scheme (MAS) for high-quality global scene surface representation with lower GPU memory consumption.\n\n- Comprehensive experiments demonstrate that our method achieves state-of-the-art performance in surface reconstruction, surpassing all existing methods. It also delivers competitive results in novel view synthesis. Additionally, our CoSurfGS significantly reduces both training time and memory cost compared to all existing methods.",
+    "created_timestamp": 1735024763,
+    "author": {
+      "screen_name": "janusch_patas",
+      "name": "MrNeRF"
+    },
+    "media": {
+      "all": [
+        {
+          "type": "video",
+          "url": "https://video.twimg.com/amplify_video/1871455494612901888/vid/avc1/1152x720/AOUpsdMImLaCBTil.mp4?tag=14",
+          "duration": 34.075
+        }
+      ]
+    }
+  }
+}

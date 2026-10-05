@@ -1,0 +1,35 @@
+vault = "/home/brett/Documents/x_bookmarks"
+provider = "openai"
+model = "gpt-6.1-sol"
+api_key_env = "OPENAI_API_KEY"
+base_url = "https://api.openai.com/v1"
+reasoning_effort = "medium"
+transcription = "openai"
+transcription_model = "gpt-transcribe"
+# transcription = "local" uses the optional faster-whisper package on CPU.
+# transcription = "off" records the missing audio analysis explicitly.
+# transcription_base_url = "https://api.openai.com/v1"
+# transcription_key_env = "OPENAI_API_KEY"
+cache = ".x2o-cache"
+max_sources = 10
+max_frames = 12
+max_media = 4
+max_video_seconds = 600
+max_download_mb = 100
+max_output_tokens = 16000
+# Copy baseline prompts with `x2o prompts ./my-prompts`, then customize:
+# research_prompt = "my-prompts/research.md"
+# synthesis_prompt = "my-prompts/synthesis.md"
+
+# Alternative LLMs (OpenAI-compatible chat completions, e.g. Ollama/OpenRouter):
+# provider = "compatible"
+# base_url = "http://localhost:11434/v1"
+# model = "your-vision-model"
+# api_key_env = "LLM_API_KEY"
+# reasoning_effort = "low"  # Not sent to compatible chat completions.
+# This path uses TAVILY_API_KEY for live web search. Use a vision-capable model.
+
+# Existing Codex login:
+# provider = "codex"
+# Uses `codex exec` with live web search, a read-only sandbox, images, and JSON schema.
+# Audio can use local transcription without an API key.
