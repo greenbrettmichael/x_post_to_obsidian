@@ -254,7 +254,9 @@ def apply_plan(plan_data, vault):
                 written.append(change["path"])
             state = path_in(vault, ".x2o/processed.json")
             processed = json.loads(state.read_text()) if state.exists() else {}
-            processed[plan_data["post_id"]] = {"processed": now(), "paths": plan_data.get("active_paths", [c["path"] for c in changes])}
+            post_file = path_in(vault, f"Posts/{plan_data['post_id']}.md")
+            processed[plan_data["post_id"]] = {"processed": now(), "paths": plan_data.get("active_paths", [c["path"] for c in changes]),
+                "post_sha256": digest(post_file.read_bytes()) if post_file.is_file() else None}
             atomic_write(state, json.dumps(processed, indent=2).encode())
         except Exception:
             for relative in reversed(written):

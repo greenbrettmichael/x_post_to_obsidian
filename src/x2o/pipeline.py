@@ -44,7 +44,8 @@ def research_post(url: str, cfg: Config, supplied=None, force=False, progress=pr
     (cache / "evidence.json").write_text(json.dumps(evidence, ensure_ascii=False, indent=2))
     progress("Synthesizing cited post and shared topic notes")
     result = provider.synthesize(prompt(cfg, "synthesis"), json.dumps(evidence, ensure_ascii=False), images)
-    allowed = {post.url, *post.links, *research["urls"]}
+    allowed = {post.url, *post.links, *research["urls"],
+               *[item["url"] for item in media if item.get("url")]}
     for doc in linked + docs:
         allowed.add(doc["url"])
         if doc.get("resolved_url"):

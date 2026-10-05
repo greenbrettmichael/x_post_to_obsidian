@@ -43,9 +43,30 @@ x2o ingest --file bookmarks.txt
 x2o ingest URL1 URL2 URL3
 ```
 
-Files can be plain text, CSV, JSON, bookmark HTML, or an X archive JavaScript file containing status URLs. Query strings are stripped and repeated post IDs are deduplicated within an export. This reads exported links; it does not log into X or automatically sync your bookmark account. Batch processing continues after an individual failure and returns a nonzero exit code if any post fails.
+Files can be plain text, CSV, JSON, bookmark HTML, or an X archive JavaScript file containing status URLs. Query strings are stripped and repeated post IDs are deduplicated within an export. This ingestion command reads exported links. For account export and optional cleanup, use the bookmark commands below. Batch processing continues after an individual failure and returns a nonzero exit code if any post fails.
 
 Processed posts are skipped before making model calls. Use `--force` to redo research and replace that post's generated sections. Metadata and downloaded videos are cached; delete a post's cache directory if you need fresh metadata or media. Search and synthesis run again on every forced refresh. Evidence remains available if synthesis fails, but the CLI does not yet resume halfway through model stages.
+
+## Export and optional bookmark removal
+
+Codex computer use can capture bookmarks from a signed-in desktop browser. The workflow is in [docs/browser-bookmarks-workflow.md](docs/browser-bookmarks-workflow.md). This shell tool does not attach to Codex's desktop browser session. Its unattended account integration uses X's official API, with an OAuth user token supplied through `X_USER_ACCESS_TOKEN`.
+
+```bash
+x2o bookmarks export --output bookmarks.txt
+x2o ingest --file bookmarks.txt
+x2o bookmarks cleanup --file bookmarks.txt             # preview only
+x2o bookmarks cleanup --file bookmarks.txt --execute   # remove verified imports
+```
+
+One-command script workflow:
+
+```bash
+x2o bookmarks sync --output bookmarks.txt --remove-after-import
+```
+
+Removal is off by default. Only exported post IDs with successful vault-write receipts and intact notes are eligible. Failed imports and dry runs stay bookmarked. The authenticated X account must match the export. Exported URLs, cleanup reports, and an attempt/result journal support review and recovery. Choose a new export filename or pass `--overwrite` explicitly. API access and token scopes depend on your X developer app; this tool does not enroll the app or generate OAuth credentials.
+
+For links captured by computer use, `x2o bookmarks export --from-file captured-links.txt --account-handle YOUR_HANDLE --output bookmarks.txt` creates the same local manifest without API access. Actual browser removal needs an explicit instruction in the desktop app; API removal needs `--execute` or `--remove-after-import`. Earlier imports without write receipts need a refresh with `--force` before cleanup can consider them.
 
 ## Other providers and customization
 

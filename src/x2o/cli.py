@@ -29,6 +29,21 @@ def main(argv=None):
     sub.add_parser("doctor", help="Check config, inference credentials, media tools and vault")
     prompts = sub.add_parser("prompts", help="Copy baseline prompts for customization")
     prompts.add_argument("directory", type=Path)
+    bookmarks = sub.add_parser("bookmarks", help="Export bookmarks and optionally remove verified imports")
+    actions = bookmarks.add_subparsers(dest="bookmark_action", required=True)
+    export = actions.add_parser("export", help="Export with X API, or normalize links captured in a browser")
+    export.add_argument("--output", type=Path, default=Path("bookmarks.txt"))
+    export.add_argument("--from-file", type=Path, help="Links captured by Codex computer use; no API needed")
+    export.add_argument("--account-id", help="X account ID for a browser-captured export")
+    export.add_argument("--account-handle", help="Signed-in X handle, when account ID is unavailable")
+    export.add_argument("--overwrite", action="store_true")
+    clean = actions.add_parser("cleanup", help="Preview removal; use --execute to remove verified imports")
+    clean.add_argument("--file", type=Path, required=True)
+    clean.add_argument("--execute", action="store_true")
+    sync = actions.add_parser("sync", help="Export and import, optionally removing successful imports")
+    sync.add_argument("--output", type=Path, default=Path("bookmarks.txt"))
+    sync.add_argument("--overwrite", action="store_true")
+    sync.add_argument("--remove-after-import", action="store_true")
     args = parser.parse_args(argv)
     try:
         if args.command == "init":
@@ -49,6 +64,31 @@ def main(argv=None):
             print(f"Copied baseline prompts to {args.directory.resolve()}")
             return 0
         cfg = Config.load(args.config)
+        if args.command == "bookmarks":
+            from .bookmarks import XBookmarksAPI, export_urls, export_api, cleanup, sync
+            if args.bookmark_action == "export" and args.from_file:
+                if not args.account_id and not args.account_handle:
+                    raise ValueError("--from-file requires --account-id or --account-handle to bind cleanup to the correct X account")
+                account = {"id": args.account_id} if args.account_id else {"username": args.account_handle.lstrip('@')}
+                manifest = export_urls(urls_from_file(args.from_file), args.output, account, "browser", args.overwrite)
+                print(f"Exported {len(manifest['bookmarks'])} links to {args.output}; account identity must be verified before cleanup")
+                return 0
+            if args.bookmark_action == "cleanup" and not args.execute:
+                cleanup(args.file, cfg.vault)
+                return 0
+            api = XBookmarksAPI()
+            try:
+                if args.bookmark_action == "export":
+                    manifest = export_api(api, args.output, args.overwrite)
+                    print(f"Exported {len(manifest['bookmarks'])} bookmarks to {args.output}")
+                    return 0
+                if args.bookmark_action == "cleanup":
+                    report = cleanup(args.file, cfg.vault, api, execute=True)
+                    return 1 if report["failures"] else 0
+                report = sync(api, cfg, args.output, research_post, remove=args.remove_after_import, overwrite=args.overwrite)
+                return 1 if report["imports_failed"] or report["cleanup"]["failures"] else 0
+            finally:
+                api.close()
         if args.command == "doctor":
             from .media import ffmpeg
             checks = {"vault": str(cfg.vault), "vault_writable": os.access(cfg.vault, os.W_OK),

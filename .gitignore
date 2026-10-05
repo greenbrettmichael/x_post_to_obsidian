@@ -5,3 +5,10 @@ __pycache__/
 .env
 x2o.toml
 .x2o-cache/
+
+# Local bookmark exports can contain private interests.
+bookmarks*.txt
+bookmarks*.txt.json
+bookmarks*.txt.cleanup.json
+bookmarks*.txt.removed.jsonl
+captured-links.txt

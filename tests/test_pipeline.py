@@ -72,6 +72,31 @@ def test_missing_credentials_actionable(tmp_path, monkeypatch):
         Provider(Config(vault=tmp_path))
 
 
+@pytest.mark.parametrize("citation,accepted", [
+    ("https://video.twimg.com/known.mp4?tag=14", True),
+    ("https://video.twimg.com/unseen.mp4", False),
+])
+def test_media_citation_provenance(tmp_path, citation, accepted):
+    vault = tmp_path / "vault"
+    vault.mkdir()
+    cfg = Config(vault=vault, cache=tmp_path / "cache")
+    supplied = tmp_path / "post.json"
+    supplied.write_text(json.dumps(RAW))
+    with patch("x2o.pipeline.Provider") as mock, \
+            patch("x2o.pipeline.collect_sources", return_value=[]), \
+            patch("x2o.pipeline.process_media", return_value=([
+                {"url": "https://video.twimg.com/known.mp4?tag=14", "type": "video", "frames": []}
+            ], [])):
+        mock.return_value.research.return_value = {"text": "Evidence", "urls": []}
+        mock.return_value.synthesize.return_value = result(citation)
+        if accepted:
+            assert research_post("https://x.com/alice/status/123", cfg, supplied)["changes"]
+        else:
+            with pytest.raises(ValueError, match="outside the retrieved"):
+                research_post("https://x.com/alice/status/123", cfg, supplied)
+    assert list(vault.iterdir()) == []
+
+
 def test_openai_requires_search_and_schema(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENAI_API_KEY", "test-key")
     cfg = Config(vault=tmp_path)
